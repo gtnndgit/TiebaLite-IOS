@@ -21,6 +21,8 @@ final class TiebaBackgroundSnapshot: Sendable {
 
   private let keychainService = "app"
   private let keychainAccount = "tiebalite.native.background_snapshot"
+  /// 兜底存储里的键：不以 "tiebalite." 开头，避免被 clearAllCredentials 的前缀枚举误删。
+  private let fallbackKey = "snapshot/background"
 
   /// 一份完整快照。值类型 + Sendable：读是整体拷贝、写是整体替换，
   /// 「字段组合自洽」由类型保证——不需要逐字段加锁，也不会读到半新半旧。
@@ -234,7 +236,13 @@ final class TiebaBackgroundSnapshot: Sendable {
     // Keychain 写入必须回读状态：失败静默丢弃会让下次冷启动凭据丢失（用户表现
     // 为"莫名掉登录"，无任何线索）。这里只记日志，不改变失败语义。
     let status = SecItemAdd(query as CFDictionary, nil)
-    if status != errSecSuccess {
+    if status == errSecMissingEntitlement {
+      do {
+        try TiebaKeychainFallback.set(fallbackKey, value)
+      } catch {
+        Self.log.error("background snapshot fallback write failed: \(error.localizedDescription, privacy: .public)")
+      }
+    } else if status != errSecSuccess {
       Self.log.error("background snapshot keychain write failed: OSStatus \(status, privacy: .public)")
     }
   }
@@ -250,7 +258,9 @@ final class TiebaBackgroundSnapshot: Sendable {
     ]
     var item: CFTypeRef?
     let status = SecItemCopyMatching(query as CFDictionary, &item)
-    guard status == errSecSuccess, let data = item as? Data else { return nil }
+    guard status == errSecSuccess, let data = item as? Data else {
+      return TiebaKeychainFallback.get(fallbackKey)
+    }
     return data
   }
 
@@ -261,5 +271,6 @@ final class TiebaBackgroundSnapshot: Sendable {
       kSecAttrAccount as String: keychainAccount
     ]
     SecItemDelete(query as CFDictionary)
+    TiebaKeychainFallback.delete(fallbackKey)
   }
 }

@@ -94,6 +94,14 @@ enum TiebaKeychain {
         return value
       }
     }
+    if let data = TiebaKeychainFallback.get(key) {
+      let value = String(data: data, encoding: .utf8)
+      cache.withLock { state in
+        state.hits[key] = value
+        state.misses.remove(key)
+      }
+      return value
+    }
     cache.withLock { _ = $0.misses.insert(key) }
     return nil
   }
@@ -115,12 +123,15 @@ enum TiebaKeychain {
     let status = SecItemAdd(addQuery as CFDictionary, nil)
     switch status {
     case errSecSuccess:
-      break
+      TiebaKeychainFallback.delete(key)
     case errSecDuplicateItem:
       let updateStatus = SecItemUpdate(query as CFDictionary, [kSecValueData as String: valueData] as CFDictionary)
       guard updateStatus == errSecSuccess else {
         throw TiebaKeychainError.writeFailed(updateStatus)
       }
+      TiebaKeychainFallback.delete(key)
+    case errSecMissingEntitlement:
+      try TiebaKeychainFallback.set(key, valueData)
     default:
       throw TiebaKeychainError.writeFailed(status)
     }
@@ -138,6 +149,7 @@ enum TiebaKeychain {
     for service in [baseService, authService, noAuthService] {
       SecItemDelete(baseQuery(service: service, key: key) as CFDictionary)
     }
+    TiebaKeychainFallback.delete(key)
     cache.withLock { state in
       state.hits.removeValue(forKey: key)
       state.misses.insert(key)
@@ -176,6 +188,7 @@ enum TiebaKeychain {
         found.insert(account)
       }
     }
+    found.formUnion(TiebaKeychainFallback.keys(prefix: prefix))
     return found.sorted()
   }
 
