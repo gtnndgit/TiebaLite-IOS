@@ -12,7 +12,7 @@ import UIKit
 public final class TiebaNotFoundViewController: UIViewController, TiebaNativeScreen {
   public override func viewDidLoad() {
     super.viewDidLoad()
-    var config = UIContentUnavailableConfiguration.empty()
+    var config = TiebaUnavailableConfiguration.empty()
     config.image = UIImage(systemName: "questionmark.folder")
     config.text = "页面不存在"
     config.secondaryText = "你访问的链接可能已失效或不存在"
@@ -33,6 +33,14 @@ public final class TiebaNotFoundViewController: UIViewController, TiebaNativeScr
       // 随即被 pop。（与旧页面 router.selectTab(0) 走的是同一条原生入口。）
       TiebaNavigator.shared.selectTab(0)
     }
-    contentUnavailableConfiguration = config
+    let stateView = TiebaUnavailableView(configuration: config)
+    stateView.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(stateView)
+    NSLayoutConstraint.activate([
+      stateView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+      stateView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+      stateView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+      stateView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+    ])
   }
 }

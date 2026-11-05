@@ -750,7 +750,7 @@ final class TiebaFormEmptyCell: TiebaFormBaseCell {
   static let reuseID = "TiebaFormEmptyCell"
 
   private let content = UIView()
-  private let emptyView = UIContentUnavailableView(configuration: .empty())
+  private let emptyView = TiebaUnavailableView(configuration: .empty())
 
   override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
     super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -772,7 +772,7 @@ final class TiebaFormEmptyCell: TiebaFormBaseCell {
   }
 
   func apply(_ row: TiebaFormRow, context: TiebaFormCellContext) {
-    var config = UIContentUnavailableConfiguration.empty()
+    var config = TiebaUnavailableConfiguration.empty()
     config.image = TiebaFormSymbol.image(row.icon ?? "tray", pointSize: 26, weight: .regular)
     config.text = row.title
     config.secondaryText = row.subtitle

@@ -2,7 +2,7 @@
 
 # 贴吧 Lite-IOS
 
-**第三方百度贴吧 iOS 客户端** ；最低 iOS 17
+**第三方百度贴吧 iOS 客户端** ；最低 iOS 16.5
 
 [![Build iOS Unsigned IPA](https://github.com/toamdou/TiebaLite-IOS/actions/workflows/build-ipa.yml/badge.svg)](https://github.com/toamdou/TiebaLite-IOS/actions/workflows/build-ipa.yml)
 ![Version](https://img.shields.io/badge/version-2.2.0-208AEF)

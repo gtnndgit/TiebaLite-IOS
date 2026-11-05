@@ -84,7 +84,7 @@ public final class TiebaMainTabBarController: UITabBarController {
     delegate = self
     applyTheme(theme)
     // 分屏 / Slide Over 改宽度不会走 viewWillTransition，尺寸类别要单独观察。
-    registerForTraitChanges([UITraitHorizontalSizeClass.self]) { (self: Self, _: UITraitCollection) in
+    observeTraits([.horizontalSizeClass]) { (self: Self, _: UITraitCollection) in
       self.configureSidebar()
     }
     // 底栏不发按压手势：底栏项的视图层级不是公开的 UIControl 保证（栏内 hitTest

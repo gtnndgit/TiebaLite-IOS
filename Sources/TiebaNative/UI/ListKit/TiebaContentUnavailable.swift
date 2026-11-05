@@ -16,8 +16,8 @@ enum TiebaContentUnavailable {
   static func error(
     _ message: String,
     onRetry: @escaping () -> Void
-  ) -> UIContentUnavailableConfiguration {
-    var config = UIContentUnavailableConfiguration.empty()
+  ) -> TiebaUnavailableConfiguration {
+    var config = TiebaUnavailableConfiguration.empty()
     config.image = UIImage(systemName: "exclamationmark.triangle")
     config.text = "加载失败"
     config.secondaryText = message
@@ -40,8 +40,8 @@ enum TiebaContentUnavailable {
     buttonTitle: String? = nil,
     buttonImage: String? = nil,
     onButton: (() -> Void)? = nil
-  ) -> UIContentUnavailableConfiguration {
-    var config = UIContentUnavailableConfiguration.empty()
+  ) -> TiebaUnavailableConfiguration {
+    var config = TiebaUnavailableConfiguration.empty()
     config.image = UIImage(systemName: image)
     config.text = text
     config.secondaryText = secondaryText
@@ -61,7 +61,7 @@ enum TiebaContentUnavailable {
   }
 }
 
-extension UIContentUnavailableView {
+extension TiebaUnavailableView {
   /// 挂错误态（三角 + 重试）并显示自身。
   func showError(_ message: String, onRetry: @escaping () -> Void) {
     configuration = TiebaContentUnavailable.error(message, onRetry: onRetry)

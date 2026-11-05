@@ -30,7 +30,7 @@ final class TiebaHomeViewController: UIViewController, TiebaTabReselectable {
   private let sortButton = UIButton(type: .system)
   /// C3（报告 37）：顶栏三块玻璃的 iPad 指针高亮 —— 实例必须强引用（UIPointerInteraction.delegate 是 weak）。
   private var topBarPointers: [TiebaPointerInteraction] = []
-  private var topBarTraitRegistration: UITraitChangeRegistration?
+  private var topBarTraitRegistration: TiebaTraitRegistration?
   // 最近访问
   private let historyHeader = UIView()
   private let historyTitle = UILabel()
@@ -186,9 +186,9 @@ final class TiebaHomeViewController: UIViewController, TiebaTabReselectable {
       pill.widthAnchor.constraint(lessThanOrEqualToConstant: TiebaLayout.floatingMaxWidth),
     ])
     applyLoginState()
-    topBarTraitRegistration = registerForTraitChanges([
-      UITraitPreferredContentSizeCategory.self,
-      UITraitAccessibilityContrast.self,
+    topBarTraitRegistration = observeTraits([
+      .preferredContentSizeCategory,
+      .accessibilityContrast,
     ]) {
       (controller: TiebaHomeViewController, _: UITraitCollection) in
       controller.updateTopBarTypography()

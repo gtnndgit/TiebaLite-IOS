@@ -13,7 +13,7 @@ final class TiebaHistoryViewController: UIViewController, TiebaNativeScreen {
   private let topBar = UIView()
   private let segmented = UISegmentedControl(items: ["贴子记录", "经过贴吧"])
   private let clearButton = UIButton(type: .system)
-  private let stateView = UIContentUnavailableView(configuration: .loading())
+  private let stateView = TiebaUnavailableView(configuration: .loading())
   /// 首屏浏览记录骨架（原 history.tsx SkeletonList variant="thread" count={6}）
   private let skeletonView = TiebaSkeletonList(variant: .thread, count: 6)
 

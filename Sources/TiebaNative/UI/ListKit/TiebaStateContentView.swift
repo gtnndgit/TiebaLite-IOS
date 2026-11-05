@@ -137,7 +137,7 @@ final class TiebaStateContentView: UIView {
   private let buttonsStack = UIStackView()
   private var buttonsWidthConstraint: NSLayoutConstraint?
   private var buttonViews: [String: UIButton] = [:]
-  private let stateView = UIContentUnavailableView(configuration: .empty())
+  private let stateView = TiebaUnavailableView(configuration: .empty())
   private let skeletonView = TiebaSkeletonList()
 
   override init(frame: CGRect) {
@@ -199,7 +199,7 @@ final class TiebaStateContentView: UIView {
 
   private func rebuild() {
     // 配置对象（SDK 的 Swift 接口按值语义导入）：改完属性再交给状态视图。
-    var config = UIContentUnavailableConfiguration.empty()
+    var config = TiebaUnavailableConfiguration.empty()
     if let imageName, !imageName.isEmpty {
       config.image = UIImage(
         systemName: imageName,

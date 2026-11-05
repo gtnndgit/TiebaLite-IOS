@@ -44,8 +44,8 @@ ios_extension(
         "//TiebaLite:device_signing": "//Signing:profile_ext",
         "//conditions:default": None,
     }),
-    # ios17 分支：与主 App（//:App）的 17.0 底线一致；扩展代码只用 ActivityKit（16.1+）面。
-    minimum_os_version = "17.0",
+    # 与主 App（//:App）的 16.5 底线一致；扩展代码只用 ActivityKit（16.1+）面。
+    minimum_os_version = "16.5",
     resources = ["AppIcon.png"],
     deps = [":live_activity_lib"],
 )

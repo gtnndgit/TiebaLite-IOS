@@ -50,26 +50,49 @@ extension TiebaSelectableLabel: UITextViewDelegate {
 
   /// [接线] 本类是自带 delegate 的只读文本框（见 init），链接点击同样要过伪装链接判定：
   /// 显示文字与真实地址不一致时先弹确认框，一致才交给系统默认动作。
+  @available(iOS 17.0, *)
   func textView(
     _ textView: UITextView,
     primaryActionFor textItem: UITextItem,
     defaultAction: UIAction
   ) -> UIAction? {
-    guard case .link(let url) = textItem.content else { return defaultAction }
+    guard case .link(let url) = textItem.content,
+      let concealed = Self.concealedAddress(in: textView, url: url, range: textItem.range)
+    else { return defaultAction }
+    return UIAction(title: defaultAction.title) { _ in
+      Self.confirmOpen(url, concealed: concealed)
+    }
+  }
+
+  /// iOS 16 走旧回调（17+ 系统优先调用上面的 primaryActionFor，不会走到这里）。
+  func textView(
+    _ textView: UITextView,
+    shouldInteractWith url: URL,
+    in characterRange: NSRange,
+    interaction: UITextItemInteraction
+  ) -> Bool {
+    guard interaction == .invokeDefaultAction,
+      let concealed = Self.concealedAddress(in: textView, url: url, range: characterRange)
+    else { return true }
+    Self.confirmOpen(url, concealed: concealed)
+    return false
+  }
+
+  private static func concealedAddress(in textView: UITextView, url: URL, range: NSRange) -> String? {
     let fullText = textView.attributedText?.string ?? ""
-    let range = textItem.range
     let length = (fullText as NSString).length
-    guard range.location != NSNotFound, NSMaxRange(range) <= length else { return defaultAction }
+    guard range.location != NSNotFound, NSMaxRange(range) <= length else { return nil }
     let displayText = (fullText as NSString).substring(with: range)
-    guard let concealed = TiebaTextLinkSafety.concealedAddress(
+    return TiebaTextLinkSafety.concealedAddress(
       url: url.absoluteString,
       displayText: displayText,
       fullText: fullText
-    ) else { return defaultAction }
-    return UIAction(title: defaultAction.title) { _ in
-      TiebaTextLinkSafety.confirm(address: concealed, presenter: TiebaTopViewController.find()) {
-        UIApplication.shared.open(url)
-      }
+    )
+  }
+
+  private static func confirmOpen(_ url: URL, concealed: String) {
+    TiebaTextLinkSafety.confirm(address: concealed, presenter: TiebaTopViewController.find()) {
+      UIApplication.shared.open(url)
     }
   }
 }

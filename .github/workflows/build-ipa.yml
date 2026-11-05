@@ -1,8 +1,8 @@
 name: Build iOS Unsigned IPA
 
 # 一次编译出一个未签名真机 IPA（Artifact + 打 tag 时发布 Release）：
-#   TiebaLite-<版本>.ipa  最低 iOS 17；同一份二进制在 iOS 26+ 上运行时吃满液态玻璃等全部特性
-#                        （26 专属能力全走 #available 分支，17/18 上自动退回该系统年代的材质）。
+#   TiebaLite-<版本>.ipa  最低 iOS 16.5；同一份二进制在 iOS 26+ 上运行时吃满液态玻璃等全部特性
+#                        （26 专属能力全走 #available 分支，16/17/18 上自动退回该系统年代的材质）。
 # 未签名（ad-hoc 签名）真机 IPA，供 SideStore / AltStore 重签侧载。
 # 纯 Swift + Bazel：无 Node / npm / Metro / CocoaPods，也不需要任何 Apple 账号或 secret。
 #
@@ -179,7 +179,7 @@ jobs:
           # 不存在 ⇒ 这一步（及其脚本）删除；产物自检仍在下一步做最低系统版本核对。
           ( cd build && zip -qry "$(basename "${base}.ipa")" Payload )
           unzip -l "build/${base}.ipa" | head -20
-          # 产物自检：APP 的最低系统版本必须是 17.0（合一后只有一种 IPA）
+          # 产物自检：APP 的最低系统版本必须是 16.5（合一后只有一种 IPA）
           /usr/libexec/PlistBuddy -c "Print :MinimumOSVersion" build/Payload/*.app/Info.plist
 
       - name: Upload artifact

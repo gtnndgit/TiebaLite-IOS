@@ -21,7 +21,7 @@ final class TiebaHomeWelcomeView: UIView {
   private var featureTitleLabels: [UILabel] = []
   private var featureDetailLabels: [UILabel] = []
   private var iconViews: [UIImageView] = []
-  private var styleRegistration: UITraitChangeRegistration?
+  private var styleRegistration: TiebaTraitRegistration?
 
   override init(frame: CGRect) {
     super.init(frame: frame)
@@ -29,10 +29,10 @@ final class TiebaHomeWelcomeView: UIView {
     build()
     applyTypography()
     applyColors()
-    styleRegistration = registerForTraitChanges([
-      UITraitPreferredContentSizeCategory.self,
-      UITraitUserInterfaceStyle.self,
-      UITraitAccessibilityContrast.self,
+    styleRegistration = observeTraits([
+      .preferredContentSizeCategory,
+      .userInterfaceStyle,
+      .accessibilityContrast,
     ]) { (view: TiebaHomeWelcomeView, _: UITraitCollection) in
       view.applyTypography()
       view.applyColors()

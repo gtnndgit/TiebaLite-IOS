@@ -15,7 +15,7 @@ final class TiebaExploreViewController: UIViewController, TiebaTabReselectable, 
   private var chromeIsCompact = false
   private var compactHeaderConstraints: [NSLayoutConstraint] = []
   private var accessibilityHeaderConstraints: [NSLayoutConstraint] = []
-  private var headerTraitRegistration: UITraitChangeRegistration?
+  private var headerTraitRegistration: TiebaTraitRegistration?
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -58,7 +58,7 @@ final class TiebaExploreViewController: UIViewController, TiebaTabReselectable, 
       segmented.leadingAnchor.constraint(equalTo: safe.leadingAnchor, constant: 16),
     ]
     updateHeaderLayout(animated: false)
-    headerTraitRegistration = registerForTraitChanges([UITraitPreferredContentSizeCategory.self]) {
+    headerTraitRegistration = observeTraits([.preferredContentSizeCategory]) {
       (controller: TiebaExploreViewController, _: UITraitCollection) in
       controller.updateHeaderLayout(animated: true)
       controller.personalized.contentSizeDidChange()

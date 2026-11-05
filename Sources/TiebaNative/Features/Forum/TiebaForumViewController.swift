@@ -7,7 +7,7 @@
 import UIKit
 
 final class TiebaForumViewController: UIViewController, TiebaNativeScreen {
-  private var contentSizeRegistration: UITraitChangeRegistration?
+  private var contentSizeRegistration: TiebaTraitRegistration?
   var screenTitle: String? { nil }
   var screenRightBarItems: [UIBarButtonItem]? { barItems() }
 
@@ -83,8 +83,8 @@ final class TiebaForumViewController: UIViewController, TiebaNativeScreen {
     super.viewDidLoad()
     view.backgroundColor = TiebaListAppearance.pageBackground
     applyPalette()
-    contentSizeRegistration = registerForTraitChanges([
-      UITraitPreferredContentSizeCategory.self,
+    contentSizeRegistration = observeTraits([
+      .preferredContentSizeCategory,
     ]) { (controller: TiebaForumViewController, _: UITraitCollection) in
       controller.applyPalette()
       // headerSpec 里含字号/行高测量，必须随 trait 重建；否则字号放大后

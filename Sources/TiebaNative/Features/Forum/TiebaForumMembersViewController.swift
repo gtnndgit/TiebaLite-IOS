@@ -38,7 +38,7 @@ final class TiebaForumMembersViewController: UIViewController {
 
   /// 分段 = TiebaTabSelector（选中/未选中两份文本交叉淡化 + 指示器连续插值，见 UI/Components）。
   private let segmented = TiebaTabSelector(items: ["成员", "等级排行"])
-  private let stateView = UIContentUnavailableView(configuration: .loading())
+  private let stateView = TiebaUnavailableView(configuration: .loading())
   /// 首屏骨架：成员段 = card count 6、排行段 = row count 8（原 members.tsx 同判据）
   private let skeletonView = TiebaSkeletonList(variant: .card, count: 6)
   private let refreshControl = UIRefreshControl()
@@ -301,7 +301,7 @@ final class TiebaForumMembersViewController: UIViewController {
   private func showState(_ kind: StateKind) {
     switch kind {
     case .loading:
-      stateView.configuration = UIContentUnavailableConfiguration.loading()
+      stateView.configuration = TiebaUnavailableConfiguration.loading()
       stateView.isHidden = false
     case .emptyMembers:
       stateView.showEmpty(
